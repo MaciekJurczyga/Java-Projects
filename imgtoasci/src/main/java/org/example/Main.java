@@ -1,66 +1,64 @@
 package org.example;
+
 import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 public class Main {
     public static char[][] asciImg;
     public static void main(String[] args) {
-        try{
-            File file = new File("C:\\Users\\macie\\OneDrive\\Pulpit\\AGH_3_sem\\java_labs\\imgtoasci\\src\\main\\java\\org\\example\\40x30_39.jpg");
-            BufferedImage picture = ImageIO.read(file);
-            int width = picture.getWidth();
-            int height = picture.getHeight();
+        try {
+            File file = new File("C:\\Users\\macie\\Java-Projects\\imgtoasci\\src\\main\\java\\org\\example\\obraz.jpg");
+            BufferedImage originalPicture = ImageIO.read(file);
+
+
+            int asciiWidth = 120;
+            int asciiHeight = (int) Math.ceil((double) originalPicture.getHeight() / (originalPicture.getWidth() / (double) asciiWidth));
+
+
+            BufferedImage resizedPicture = new BufferedImage(asciiWidth, asciiHeight, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = resizedPicture.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(originalPicture, 0, 0, asciiWidth, asciiHeight, null);
+            g.dispose();
+
+            int width = resizedPicture.getWidth();
+            int height = resizedPicture.getHeight();
             asciImg = new char[width][height];
-            for(int n = 0; n < width; n++){
-                for(int m = 0; m < height; m++){
-                    int color = picture.getRGB(n, m);
+
+
+            String asciiChars = "~%#*+=-:. ";
+
+            for(int n = 0; n < width; n++) {
+                for(int m = 0; m < height; m++) {
+                    int color = resizedPicture.getRGB(n, m);
                     int red = (color >>> 16) & 0xff;
                     int green = (color >> 8) & 0xff;
                     int blue = (color) & 0xff;
-                    float brigthness = (red * 0.2126f + green * 0.7152f + blue * 0.0722f) / 255;
-                    if(brigthness > 0.9f){
-                        asciImg[n][m] = '(';
-                    } else if (brigthness >0.8f) {
-                        asciImg[n][m] = '$';
-                    } else if (brigthness > 0.7f) {
-                        asciImg[n][m] = '#';
-                    } else if (brigthness > 0.6f) {
-                        asciImg[n][m] = '!';
-                    }else if (brigthness > 0.5f) {
-                        asciImg[n][m] = '*';
-                    }else if (brigthness > 0.4f) {
-                        asciImg[n][m] = '0';
-                    }else if (brigthness > 0.3f) {
-                        asciImg[n][m] = 'x';
-                    }else if (brigthness > 0.2f) {
-                        asciImg[n][m] = '=';
-                    }else if (brigthness > 0.1f) {
-                        asciImg[n][m] = '-';
-                    }
-                    else if (brigthness > 0.05f) {
-                        asciImg[n][m] = '.';
-                }else{
-                        asciImg[n][m] = ' ';
-                    }
+                    float brightness = (red * 0.2126f + green * 0.7152f + blue * 0.0722f) / 255;
+
+
+                    int index = (int) (brightness * (asciiChars.length() - 1));
+                    asciImg[n][m] = asciiChars.charAt(index);
                 }
             }
-            BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\macie\\OneDrive\\Pulpit\\AGH_3_sem\\java_labs\\imgtoasci\\src\\main\\java\\org\\example\\obraz.txt"));
-            for(int i = 0; i< width; i++){
-                for(int j = 0; j<height; j++){
-                   System.out.print(asciImg[i][j]);
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\macie\\Java-Projects\\imgtoasci\\src\\main\\java\\org\\example\\obraz.txt"));
+            for(int i = 0; i < height; i++) {
+                for(int j = 0; j < width; j++) {
+                    writer.write(asciImg[j][i]); // Zamieniamy kolejność indeksów, aby dostosować do wyświetlania w pliku tekstowym
                 }
-                System.out.println();
+                writer.newLine();
             }
             writer.close();
         }
-        catch(IOException e){
+        catch(IOException e) {
             e.printStackTrace();
         }
-
     }
 }
