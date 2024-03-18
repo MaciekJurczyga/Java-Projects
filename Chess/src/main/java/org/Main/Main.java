@@ -1,6 +1,8 @@
 package org.Main;
 
 
+import org.Piece.Pawn;
+
 import javax.swing.*;
 
 public class Main {

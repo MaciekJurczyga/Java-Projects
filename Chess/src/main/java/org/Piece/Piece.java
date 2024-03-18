@@ -2,7 +2,6 @@ package org.Piece;
 
 import org.Main.Board;
 
-import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
