@@ -10,6 +10,10 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     Board board = new Board();
 
+    public static final int WHITE = 0;
+    public static final int BLACK = 1;
+    int currentColor = WHITE;
+
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.black);
@@ -34,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-    private void update(){
+    private  void update(){
 
     }
     public void paintComponent(Graphics g){
