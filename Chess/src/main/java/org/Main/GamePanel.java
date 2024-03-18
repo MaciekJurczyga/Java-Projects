@@ -8,6 +8,10 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int HEIGHT = 700;
     final int FPS = 60;
     Thread gameThread;
+
+    public static final int  WHITE = 0;
+    public static final int  BLACK = 1;
+    int currentColor = WHITE;
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.black);
