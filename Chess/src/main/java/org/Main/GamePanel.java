@@ -8,6 +8,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int HEIGHT = 700;
     final int FPS = 60;
     Thread gameThread;
+    Board board = new Board();
 
     public static final int  WHITE = 0;
     public static final int  BLACK = 1;
@@ -41,6 +42,9 @@ public class GamePanel extends JPanel implements Runnable {
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        board.draw(g2);
+
     }
 
 
