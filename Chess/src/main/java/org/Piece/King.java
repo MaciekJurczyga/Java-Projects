@@ -13,7 +13,7 @@ public class King extends Piece{
             image = getImage("/piece/piece/b-king");
         }
     }
-
+    
     public boolean canMove(int targetCol, int targetRow){
         if(isWithinBoard(targetCol, targetRow)){
              if(Math.abs(targetCol-preCol) + Math.abs(targetRow - preRow) == 1
