@@ -12,4 +12,5 @@ public class Rook extends Piece{
             image = getImage("/piece/piece/b-rook");
         }
     }
+
 }

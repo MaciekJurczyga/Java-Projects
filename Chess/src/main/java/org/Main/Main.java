@@ -1,8 +1,6 @@
 package org.Main;
 
 
-import org.Piece.Pawn;
-
 import javax.swing.*;
 
 public class Main {
@@ -16,7 +14,5 @@ public class Main {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         gp.launchGame();
-
-
     }
 }
