@@ -124,9 +124,12 @@ public class GamePanel extends JPanel implements Runnable {
             if (activeP != null) {
                 if (validSquare) {
                     synchronized (simPieces) {
-                        copyPieces(simPieces, pieces); // Zamieniamy miejscami simPieces z pieces
+                        copyPieces(simPieces, pieces);
+                        activeP.updatePosition();
+                        activeP = null;
+                        changePlayer();
                     }
-                    activeP.updatePosition();
+
 
                 } else {
                     synchronized (simPieces) {
@@ -161,7 +164,16 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-
+    public void changePlayer(){
+        if(currentColor == WHITE){
+            currentColor = BLACK;
+            System.out.println("color changed to black");
+        }
+        else{
+            currentColor = WHITE;
+            System.out.println("color changed to white");
+        }
+    }
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;

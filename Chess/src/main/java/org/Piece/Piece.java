@@ -59,13 +59,15 @@ public class Piece {
         y = getY(row);
         preCol = getCol(x);
         preRow = getRow(y);
+        moved = true;
+
     }
     public void resetPosition(){
         col = preCol;
         row = preRow;
         x = getX(col);
         y = getY(row);
-        moved = true;
+
     }
     public boolean canMove(int targetCol, int targetRow) {
         return false;

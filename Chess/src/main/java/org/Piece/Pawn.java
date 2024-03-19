@@ -13,7 +13,7 @@ public class Pawn extends Piece {
     }
 
     public boolean canMove(int targetCol, int targetRow) {
-        if (isWithinBoard(targetCol, targetRow) && !isSameSquare(targetCol, targetRow)) {
+        if (isWithinBoard(targetCol, targetRow) && isSameSquare(targetCol, targetRow) == false) {
             int moveValue;
             if (color == GamePanel.WHITE) {
                 moveValue = -1;
@@ -26,6 +26,7 @@ public class Pawn extends Piece {
             }
             if(targetCol == preCol && targetRow == preRow + moveValue * 2 && hittingP == null && moved == false
             && !pieceIsOnStraightLine(targetCol, targetRow)){
+
                 return true;
             }
             if(Math.abs(targetCol -preCol) == 1 && targetRow == preRow + moveValue &&
