@@ -25,6 +25,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static ArrayList<Piece> pieces = new ArrayList<>();
     public static ArrayList<Piece> simPieces = new ArrayList<>();
     Piece activeP;
+    public static Piece castlingP;
 
     // BOOLEANS
     boolean canMove;
@@ -164,14 +165,25 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+    private void checkCastling(){
+        if(castlingP != null){
+            if(castlingP.col == 0){
+                castlingP.col += 3;
+            }
+            else if(castlingP.col == 7){
+                castlingP.col -=2;
+            }
+            castlingP.x = castlingP.getX(castlingP.col);
+        }
+    }
     public void changePlayer(){
         if(currentColor == WHITE){
             currentColor = BLACK;
-            System.out.println("color changed to black");
+
         }
         else{
             currentColor = WHITE;
-            System.out.println("color changed to white");
+
         }
     }
     public void paintComponent(Graphics g) {
@@ -198,6 +210,16 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
             activeP.draw(g2);
+        }
+
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
+        g2.setColor(Color.white);
+        if(currentColor == WHITE){
+            g2.drawString("White's turn", 840, 550);
+        }
+        else{
+            g2.drawString("Black's turn", 840, 90);
         }
     }
 }
