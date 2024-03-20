@@ -24,12 +24,15 @@ public class GamePanel extends JPanel implements Runnable {
     // PIECES
     public static ArrayList<Piece> pieces = new ArrayList<>();
     public static ArrayList<Piece> simPieces = new ArrayList<>();
+    ArrayList<Piece> promoPieces = new ArrayList<>();
     Piece activeP;
+
     public static Piece castlingP;
 
     // BOOLEANS
     boolean canMove;
     boolean validSquare;
+    boolean promotion = false;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -65,6 +68,7 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new King(WHITE, 4, 7));
 
         // black team
+
         pieces.add(new Pawn(BLACK, 0, 1));
         pieces.add(new Pawn(BLACK, 1, 1));
         pieces.add(new Pawn(BLACK, 2, 1));
@@ -81,6 +85,8 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new Bishop(BLACK, 5, 0));
         pieces.add(new Queen(BLACK, 3, 0));
         pieces.add(new King(BLACK, 4, 0));
+
+
     }
 
     private void copyPieces(ArrayList<Piece> source, ArrayList<Piece> target) {
@@ -107,44 +113,56 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update() {
-        if (mouse.pressed) {
-            if (activeP == null) {
-                for (Piece piece : simPieces) {
-                    if (piece.color == currentColor &&
-                            piece.col == mouse.x / Board.SQUARE_SIZE &&
-                            piece.row == mouse.y / Board.SQUARE_SIZE) {
-                        activeP = piece;
-                    }
-                }
-            } else {
-                simulate();
-            }
+        if (promotion) {
+            promoting();
         }
-        if (!mouse.pressed) {
-            if (activeP != null) {
-                if (validSquare) {
-                    synchronized (simPieces) {
-                        copyPieces(simPieces, pieces);
-                        activeP.updatePosition();
-                        if (castlingP != null) {
-                            castlingP.updatePosition();
+        else{
+            if (mouse.pressed) {
+                if (activeP == null) {
+                    for (Piece piece : simPieces) {
+                        if (piece.color == currentColor &&
+                                piece.col == mouse.x / Board.SQUARE_SIZE &&
+                                piece.row == mouse.y / Board.SQUARE_SIZE) {
+                            activeP = piece;
                         }
-                        activeP = null;
-                        changePlayer();
                     }
-
-
                 } else {
-                    synchronized (simPieces) {
-                        copyPieces(pieces, simPieces);
-                    }
-                    activeP.resetPosition();
-                    activeP = null;
+                    simulate();
                 }
             }
-        }
+            if (!mouse.pressed) {
+                if (activeP != null) {
+                    if (validSquare) {
+                        synchronized (simPieces) {
+                            copyPieces(simPieces, pieces);
+                            activeP.updatePosition();
+                            if (castlingP != null) {
+                                castlingP.updatePosition();
+                            }
+
+                            if (canPromote()) {
+                                promotion = true;
+                                System.out.println("jestem aktwny" + activeP.col);
+                            } else {
+                                changePlayer();
+                                activeP = null;
+                            }
+
+                        }
+
+
+                    } else {
+                        synchronized (simPieces) {
+                            copyPieces(pieces, simPieces);
+                        }
+                        activeP.resetPosition();
+                        activeP = null;
+                    }
+                }
+            }
     }
 
+}
     private synchronized void simulate() {
         canMove = false;
         validSquare = false;
@@ -204,6 +222,56 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+        public boolean canPromote(){
+            if( activeP.type == Type.PAWN){
+
+                if(currentColor == WHITE && activeP.row == 0 || currentColor == BLACK && activeP.row == 7){
+                    System.out.println("jestem aktywny w metodzie canPromote" + activeP.col);
+                    promoPieces.clear();
+                    promoPieces.add(new Rook(currentColor, 10, 2));
+                    promoPieces.add(new Knight(currentColor, 10, 3));
+                    promoPieces.add(new Bishop(currentColor,10,4));
+                    promoPieces.add(new Queen(currentColor, 10,5));
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public void promoting(){
+            if(mouse.pressed){
+                for(Piece piece:promoPieces){
+                    if(piece.col == mouse.x/Board.SQUARE_SIZE && piece.row == mouse.y/Board.SQUARE_SIZE) {
+                        System.out.println("jestem aktywny w metodzie promoting" + activeP.col);
+                        switch (piece.type) {
+                            case ROOK:
+                                simPieces.add(new Rook(currentColor, activeP.col, activeP.row));
+                                break;
+                            case BISHOP:
+                                simPieces.add(new Bishop(currentColor, activeP.col, activeP.row));
+                                break;
+                            case QUEEN:
+                                simPieces.add(new Queen(currentColor, activeP.col, activeP.row));
+                                break;
+                            case KNIGHT:
+                                simPieces.add(new Knight(currentColor, activeP.col, activeP.row));
+                                break;
+                            default:
+                                break;
+                        }
+
+                        simPieces.remove(activeP);
+                        synchronized (simPieces) {
+                            copyPieces(simPieces, pieces);
+                        }
+                        activeP = null;
+                        promotion = false;
+                        changePlayer();
+                    }
+                }
+            }
+
+        }
         public void paintComponent (Graphics g){
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
@@ -229,14 +297,25 @@ public class GamePanel extends JPanel implements Runnable {
                 }
                 activeP.draw(g2);
             }
+            if(promotion){
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
+                g2.setColor(Color.white);
+                g2.drawString("promote to:", 750, 150);
+                for(Piece piece:promoPieces){
+                    g2.drawImage(piece.image, piece.getX(piece.col), piece.getY(piece.row), Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
+                }
+            }
+            else{
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
+                g2.setColor(Color.white);
+                if (currentColor == WHITE) {
+                    g2.drawString("White's turn", 840, 550);
+                } else {
+                    g2.drawString("Black's turn", 840, 200);
 
-            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
-            g2.setColor(Color.white);
-            if (currentColor == WHITE) {
-                g2.drawString("White's turn", 840, 550);
-            } else {
-                g2.drawString("Black's turn", 840, 90);
+                }
             }
         }
 
