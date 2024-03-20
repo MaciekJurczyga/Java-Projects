@@ -116,8 +116,7 @@ public class GamePanel extends JPanel implements Runnable {
                         activeP = piece;
                     }
                 }
-            }
-            else {
+            } else {
                 simulate();
             }
         }
@@ -127,6 +126,9 @@ public class GamePanel extends JPanel implements Runnable {
                     synchronized (simPieces) {
                         copyPieces(simPieces, pieces);
                         activeP.updatePosition();
+                        if (castlingP != null) {
+                            castlingP.updatePosition();
+                        }
                         activeP = null;
                         changePlayer();
                     }
@@ -150,6 +152,11 @@ public class GamePanel extends JPanel implements Runnable {
         synchronized (simPieces) {
             copyPieces(pieces, simPieces); // Zaktualizuj kolekcję na podstawie pieces
         }
+        if (castlingP != null) {
+            castlingP.col = castlingP.preCol;
+            castlingP.x = castlingP.getX(castlingP.col);
+            castlingP = null;
+        }
 
         activeP.x = mouse.x - Board.HALF_SQUARE_SIZE;
         activeP.y = mouse.y - Board.HALF_SQUARE_SIZE;
@@ -158,6 +165,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (activeP.canMove(activeP.col, activeP.row)) {
             canMove = true;
             validSquare = true;
+            checkCastling();
             if (activeP.hittingP != null) {
                 synchronized (simPieces) {
                     simPieces.remove(activeP.hittingP.getIndex());
@@ -165,61 +173,71 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-    private void checkCastling(){
-        if(castlingP != null){
-            if(castlingP.col == 0){
+
+    private void checkCastling() {
+        if (castlingP != null) {
+            if (castlingP.col == 0) {
                 castlingP.col += 3;
-            }
-            else if(castlingP.col == 7){
-                castlingP.col -=2;
+            } else if (castlingP.col == 7) {
+                castlingP.col -= 2;
             }
             castlingP.x = castlingP.getX(castlingP.col);
         }
     }
-    public void changePlayer(){
-        if(currentColor == WHITE){
+
+    public void changePlayer() {
+        if (currentColor == WHITE) {
             currentColor = BLACK;
-
-        }
-        else{
-            currentColor = WHITE;
-
-        }
-    }
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-
-        // board
-        board.draw(g2);
-
-        // pieces
-        synchronized (simPieces) {
-            for (Piece p : simPieces) {
-                p.draw(g2);
-            }
-        }
-        if (activeP != null) {
-            if (canMove) {
-                synchronized (this) {
-                    g2.setColor(Color.white);
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
-                    g2.fillRect(activeP.col * Board.SQUARE_SIZE, activeP.row * Board.SQUARE_SIZE,
-                            Board.SQUARE_SIZE, Board.SQUARE_SIZE);
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            for (Piece piece : pieces) {
+                if (piece.color == BLACK) {
+                    piece.twoStepped = false;
                 }
             }
-            activeP.draw(g2);
-        }
+        } else {
+            currentColor = WHITE;
+            for (Piece piece : pieces) {
+                if (piece.color == WHITE) {
+                    piece.twoStepped = false;
 
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
-        g2.setColor(Color.white);
-        if(currentColor == WHITE){
-            g2.drawString("White's turn", 840, 550);
-        }
-        else{
-            g2.drawString("Black's turn", 840, 90);
+                }
+
+            }
         }
     }
+        public void paintComponent (Graphics g){
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+
+            // board
+            board.draw(g2);
+
+            // pieces
+            synchronized (simPieces) {
+                for (Piece p : simPieces) {
+                    p.draw(g2);
+                }
+            }
+            if (activeP != null) {
+                if (canMove) {
+                    synchronized (this) {
+                        g2.setColor(Color.white);
+                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+                        g2.fillRect(activeP.col * Board.SQUARE_SIZE, activeP.row * Board.SQUARE_SIZE,
+                                Board.SQUARE_SIZE, Board.SQUARE_SIZE);
+                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                    }
+                }
+                activeP.draw(g2);
+            }
+
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
+            g2.setColor(Color.white);
+            if (currentColor == WHITE) {
+                g2.drawString("White's turn", 840, 550);
+            } else {
+                g2.drawString("Black's turn", 840, 90);
+            }
+        }
+
 }
