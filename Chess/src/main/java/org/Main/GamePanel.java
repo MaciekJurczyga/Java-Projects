@@ -283,7 +283,7 @@ public class GamePanel extends JPanel implements Runnable {
                 p.draw(g2);
             }
         }
-        if (activePieceCopy != null) { 
+        if (activePieceCopy != null) {
             if (canMove) {
                 g2.setColor(Color.white);
                 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
