@@ -135,6 +135,7 @@ public class GamePanel extends JPanel implements Runnable {
                     if (validSquare) {
                         synchronized (simPieces) {
                             copyPieces(simPieces, pieces);
+                        }
                             activeP.updatePosition();
                             if (castlingP != null) {
                                 castlingP.updatePosition();
@@ -148,9 +149,6 @@ public class GamePanel extends JPanel implements Runnable {
                                 activeP = null;
                             }
 
-                        }
-
-
                     } else {
                         synchronized (simPieces) {
                             copyPieces(pieces, simPieces);
@@ -160,9 +158,8 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                 }
             }
+        }
     }
-
-}
     private synchronized void simulate() {
         canMove = false;
         validSquare = false;
@@ -222,101 +219,99 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-        public boolean canPromote(){
-            if( activeP.type == Type.PAWN){
+    public boolean canPromote(){
+        if( activeP.type == Type.PAWN){
 
-                if(currentColor == WHITE && activeP.row == 0 || currentColor == BLACK && activeP.row == 7){
-                    System.out.println("jestem aktywny w metodzie canPromote" + activeP.col);
-                    promoPieces.clear();
-                    promoPieces.add(new Rook(currentColor, 10, 2));
-                    promoPieces.add(new Knight(currentColor, 10, 3));
-                    promoPieces.add(new Bishop(currentColor,10,4));
-                    promoPieces.add(new Queen(currentColor, 10,5));
-                    return true;
-                }
+            if(currentColor == WHITE && activeP.row == 0 || currentColor == BLACK && activeP.row == 7){
+                System.out.println("jestem aktywny w metodzie canPromote" + activeP.col);
+                promoPieces.clear();
+                promoPieces.add(new Rook(currentColor, 10, 2));
+                promoPieces.add(new Knight(currentColor, 10, 3));
+                promoPieces.add(new Bishop(currentColor,10,4));
+                promoPieces.add(new Queen(currentColor, 10,5));
+                return true;
             }
-
-            return false;
         }
-        public void promoting(){
-            if(mouse.pressed){
-                for(Piece piece:promoPieces){
-                    if(piece.col == mouse.x/Board.SQUARE_SIZE && piece.row == mouse.y/Board.SQUARE_SIZE) {
-                        System.out.println("jestem aktywny w metodzie promoting" + activeP.col);
-                        switch (piece.type) {
-                            case ROOK:
-                                simPieces.add(new Rook(currentColor, activeP.col, activeP.row));
-                                break;
-                            case BISHOP:
-                                simPieces.add(new Bishop(currentColor, activeP.col, activeP.row));
-                                break;
-                            case QUEEN:
-                                simPieces.add(new Queen(currentColor, activeP.col, activeP.row));
-                                break;
-                            case KNIGHT:
-                                simPieces.add(new Knight(currentColor, activeP.col, activeP.row));
-                                break;
-                            default:
-                                break;
-                        }
 
-                        simPieces.remove(activeP);
-                        synchronized (simPieces) {
-                            copyPieces(simPieces, pieces);
-                        }
-                        activeP = null;
-                        promotion = false;
-                        changePlayer();
+        return false;
+    }
+    public void promoting(){
+        if(mouse.pressed){
+            for(Piece piece:promoPieces){
+                if(piece.col == mouse.x/Board.SQUARE_SIZE && piece.row == mouse.y/Board.SQUARE_SIZE) {
+                    System.out.println("jestem aktywny w metodzie promoting" + activeP.col);
+                    switch (piece.type) {
+                        case ROOK:
+                            simPieces.add(new Rook(currentColor, activeP.col, activeP.row));
+                            break;
+                        case BISHOP:
+                            simPieces.add(new Bishop(currentColor, activeP.col, activeP.row));
+                            break;
+                        case QUEEN:
+                            simPieces.add(new Queen(currentColor, activeP.col, activeP.row));
+                            break;
+                        case KNIGHT:
+                            simPieces.add(new Knight(currentColor, activeP.col, activeP.row));
+                            break;
+                        default:
+                            break;
                     }
-                }
-            }
 
-        }
-        public void paintComponent (Graphics g){
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g;
-
-            // board
-            board.draw(g2);
-
-            // pieces
-            synchronized (simPieces) {
-                for (Piece p : simPieces) {
-                    p.draw(g2);
-                }
-            }
-            if (activeP != null) {
-                if (canMove) {
-                    synchronized (this) {
-                        g2.setColor(Color.white);
-                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
-                        g2.fillRect(activeP.col * Board.SQUARE_SIZE, activeP.row * Board.SQUARE_SIZE,
-                                Board.SQUARE_SIZE, Board.SQUARE_SIZE);
-                        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                    simPieces.remove(activeP);
+                    synchronized (simPieces) {
+                        copyPieces(simPieces, pieces);
                     }
-                }
-                activeP.draw(g2);
-            }
-            if(promotion){
-                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
-                g2.setColor(Color.white);
-                g2.drawString("promote to:", 750, 150);
-                for(Piece piece:promoPieces){
-                    g2.drawImage(piece.image, piece.getX(piece.col), piece.getY(piece.row), Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
-                }
-            }
-            else{
-                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
-                g2.setColor(Color.white);
-                if (currentColor == WHITE) {
-                    g2.drawString("White's turn", 840, 550);
-                } else {
-                    g2.drawString("Black's turn", 840, 200);
 
+                    activeP = null;
+                    promotion = false;
+                    changePlayer();
                 }
             }
         }
 
+    }
+    public void paintComponent (Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        Piece activePieceCopy = activeP;
+        // board
+        board.draw(g2);
+
+        // pieces
+        synchronized (simPieces) {
+            for (Piece p : simPieces) {
+                p.draw(g2);
+            }
+        }
+        if (activePieceCopy != null) { 
+            if (canMove) {
+                g2.setColor(Color.white);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+                g2.fillRect(activePieceCopy.col * Board.SQUARE_SIZE, activePieceCopy.row * Board.SQUARE_SIZE,
+                        Board.SQUARE_SIZE, Board.SQUARE_SIZE);
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            }
+            activePieceCopy.draw(g2);
+        }
+        if (promotion) {
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
+            g2.setColor(Color.white);
+            g2.drawString("promote to:", 750, 150);
+            for (Piece piece : promoPieces) {
+                g2.drawImage(piece.image, piece.getX(piece.col), piece.getY(piece.row), Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
+            }
+        } else {
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setFont(new Font("Book Antiqua", Font.PLAIN, 40));
+            g2.setColor(Color.white);
+            if (currentColor == WHITE) {
+                g2.drawString("White's turn", 840, 550);
+            } else {
+                g2.drawString("Black's turn", 840, 200);
+
+            }
+        }
+
+    }
 }
