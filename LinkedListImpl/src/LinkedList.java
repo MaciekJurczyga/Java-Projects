@@ -52,4 +52,17 @@ public class LinkedList {
         }
         System.out.print(" null");
     }
+    public void reverse(){
+        Node prev = null;
+        Node cur = head;
+        while(cur!=null){
+            Node tmp;
+            tmp = cur.next;
+            cur.next = prev;
+            prev = cur;
+            cur = tmp;
+        }
+        head = prev;
+
+    }
 }

@@ -12,5 +12,8 @@ public class Main {
         linkedList.remove(6);
 
         linkedList.display();
+        linkedList.reverse();
+        System.out.println();
+        linkedList.display();
     }
 }
