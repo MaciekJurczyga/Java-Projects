@@ -3,7 +3,7 @@ public class Main {
         LinkedList linkedList = new LinkedList();
         linkedList.insert(5);
         linkedList.insert(2);
-        linkedList.insert(3);
+        linkedList.insert(6);
         linkedList.insert(11);
         linkedList.insert(6);
 

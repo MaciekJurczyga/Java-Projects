@@ -29,15 +29,19 @@ public class LinkedList {
             if(cur.val == val){
                 if(prev == null){
                     head = cur.next;
+                    cur = cur.next;
                 }
                 else{
                     prev.next = cur.next;
+                    cur = cur.next;
                 }
-                return;
             }
-            prev = cur;
-            cur = cur.next;
+            else{
+                prev = cur;
+                cur = cur.next;
+            }
         }
+
     }
 
     public void display(){
