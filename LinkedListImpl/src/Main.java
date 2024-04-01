@@ -15,5 +15,6 @@ public class Main {
         linkedList.reverse();
         System.out.println();
         linkedList.display();
+        linkedList.display();
     }
 }
