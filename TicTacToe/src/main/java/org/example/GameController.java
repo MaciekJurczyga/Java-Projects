@@ -4,6 +4,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GameController extends JPanel implements Runnable  {
     public static final int WIDTH = 750;
@@ -45,7 +46,7 @@ public class GameController extends JPanel implements Runnable  {
         }
     }
     private void update(){
-        if(mouse.pressed && !mouseClicked && mouse.x > 0 && mouse.x < 540 && mouse.y > 0 && mouse.y < 540 ){
+        if(!isOver && mouse.pressed && !mouseClicked && mouse.x > 0 && mouse.x < 540 && mouse.y > 0 && mouse.y < 540 ){
             int col = getCol(mouse.x);
             int row = getRow(mouse.y);
 
@@ -60,14 +61,7 @@ public class GameController extends JPanel implements Runnable  {
                     mouseClicked = true;
                     if(isOver()){
                         isOver = true;
-                        int choice = JOptionPane.showConfirmDialog(null, "Game is over",
-                                "would you like to play again?", JOptionPane.YES_NO_OPTION);
-                        if(choice == JOptionPane.YES_OPTION){
-                            resetGame();
-                        }
-                        else{
-                            System.exit(0);
-                        }
+
                         return;
                     }
                     changeTurn();
@@ -76,13 +70,31 @@ public class GameController extends JPanel implements Runnable  {
         } else if (!mouse.pressed) {
             mouseClicked = false;
         }
+        if(isOver){
+            resetGame();
+        }
     }
 
     private void resetGame() {
-        occupied = new int[3][3];
-        signs = new ArrayList<>();
-        currentSign = '0';
-        isOver = false;
+        try{
+            Thread.sleep(2000);
+            int choice = JOptionPane.showConfirmDialog(null, "Game is over",
+                    "would you like to play again?", JOptionPane.YES_NO_OPTION);
+            if(choice == JOptionPane.YES_OPTION){
+                for (int[] ints : occupied) {
+                    Arrays.fill(ints, 0);
+                }
+                signs.clear();
+                // currentSign = '0';
+                isOver = false;
+            }
+            else{
+                System.exit(0);
+            }
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     public void changeTurn(){
