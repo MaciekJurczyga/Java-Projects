@@ -9,10 +9,10 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setVisible(true);
-        window.setLocationRelativeTo(null);
         GameController gc = new GameController();
         window.add(gc);
         window.pack();
+        window.setLocationRelativeTo(null);
         gc.launchGame();
 
     }

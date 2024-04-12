@@ -16,8 +16,10 @@ public class GameController extends JPanel implements Runnable  {
     Mouse mouse = new Mouse();
     private boolean mouseClicked = false;
     private boolean isOver = false;
+    private boolean isDraw = false;
     public static ArrayList<Sign> signs = new ArrayList<>();
-    char currentSign = 'O';
+    char currentSign;
+    private boolean signChosen;
     int[][] startCords = new int[1][2];
     int[][] endCords = new int[1][2];
 
@@ -38,6 +40,10 @@ public class GameController extends JPanel implements Runnable  {
         long lastTime = System.nanoTime();
         long currentTime;
         while (gameThread != null) {
+            if(!signChosen){
+                currentSign = chooseStartingSign();
+                signChosen = true;
+            }
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             if (delta >= 1) {
@@ -64,7 +70,10 @@ public class GameController extends JPanel implements Runnable  {
                     mouseClicked = true;
                     if(isOver()){
                         isOver = true;
-
+                        return;
+                    }
+                    if(isDraw()){
+                        isDraw = true;
                         return;
                     }
                     changeTurn();
@@ -73,16 +82,33 @@ public class GameController extends JPanel implements Runnable  {
         } else if (!mouse.pressed) {
             mouseClicked = false;
         }
-        if(isOver){
+        if(isOver || isDraw){
             resetGame();
+        }
+    }
+    private char chooseStartingSign(){
+        Object[] options = {"X", "O"};
+        int choice = JOptionPane.showOptionDialog(null,
+                "Choose your starting sign:",
+                "Starting Sign",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        if (choice == JOptionPane.YES_OPTION) {
+            return 'X';
+        } else {
+            return 'O';
         }
     }
 
     private void resetGame() {
         try{
             Thread.sleep(2000);
-            int choice = JOptionPane.showConfirmDialog(null, "Game is over",
-                    "would you like to play again?", JOptionPane.YES_NO_OPTION);
+            int choice = JOptionPane.showConfirmDialog(null, "Would you like to play again?",
+                    "Game is over", JOptionPane.YES_NO_OPTION);
             if(choice == JOptionPane.YES_OPTION){
                 for (int[] ints : occupied) {
                     Arrays.fill(ints, 0);
@@ -90,6 +116,8 @@ public class GameController extends JPanel implements Runnable  {
                 signs.clear();
                 currentSign = 'O';
                 isOver = false;
+                isDraw = false;
+                signChosen = false;
             }
             else{
                 System.exit(0);
@@ -146,6 +174,16 @@ public class GameController extends JPanel implements Runnable  {
         }
         return false;
     }
+    private boolean isDraw(){
+        for(int i = 0; i<occupied.length; i++){
+            for(int j=0; j<occupied[0].length; j++){
+                if(occupied[i][j] == 0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -160,10 +198,10 @@ public class GameController extends JPanel implements Runnable  {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setFont(new Font("Book Antiqua", Font.PLAIN, 30));
         g2.setColor(Color.black);
-        if(!isOver) {
+        if(!isOver && !isDraw) {
             if (currentSign == 'X') {
                 g2.drawString("X's turn", 560, 270);
-            } else {
+            } else if(currentSign == 'O') {
                 g2.drawString("O's turn", 560, 270);
             }
         }
@@ -178,7 +216,9 @@ public class GameController extends JPanel implements Runnable  {
             int endY = endCords[0][1];
 
             g2.drawLine(startY, startX, endY, endX);
-
+        }
+        if(isDraw){
+            g2.drawString("Draw!", 560, 270);
         }
     }
 }

@@ -9,6 +9,7 @@
       <change beforePath="$PROJECT_DIR$/../EmailSender/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../EmailSender/src/main/java/org/example/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../WaterTanksAlgorithm/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../WaterTanksAlgorithm/src/main/java/org/example/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,7 +73,7 @@
       <workItem from="1712848822525" duration="4000" />
       <workItem from="1712936758782" duration="9000" />
       <workItem from="1712936773667" duration="1428000" />
-      <workItem from="1712938213791" duration="4535000" />
+      <workItem from="1712938213791" duration="6414000" />
     </task>
     <servers />
   </component>
