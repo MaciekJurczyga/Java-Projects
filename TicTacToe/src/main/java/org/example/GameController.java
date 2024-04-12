@@ -58,6 +58,18 @@ public class GameController extends JPanel implements Runnable  {
                     }
                     occupied[row][col] = currentSign;
                     mouseClicked = true;
+                    if(isOver()){
+                        isOver = true;
+                        int choice = JOptionPane.showConfirmDialog(null, "Game is over",
+                                "would you like to play again?", JOptionPane.YES_NO_OPTION);
+                        if(choice == JOptionPane.YES_OPTION){
+                            resetGame();
+                        }
+                        else{
+                            System.exit(0);
+                        }
+                        return;
+                    }
                     changeTurn();
                 }
             }
@@ -65,6 +77,14 @@ public class GameController extends JPanel implements Runnable  {
             mouseClicked = false;
         }
     }
+
+    private void resetGame() {
+        occupied = new int[3][3];
+        signs = new ArrayList<>();
+        currentSign = '0';
+        isOver = false;
+    }
+
     public void changeTurn(){
         if(currentSign == 'X'){
             currentSign = 'O';
@@ -79,6 +99,51 @@ public class GameController extends JPanel implements Runnable  {
 
     public int getRow(int y){
         return  y/Board.SQUARE_SIZE;
+    }
+
+    public boolean isOver(){
+        if(occupied[0][0] == occupied[0][1] && occupied[0][2] == occupied[0][1]){
+            if(occupied[0][0] != 0) {
+                return true;
+            }
+        }
+        if(occupied[1][0] == occupied[1][1] && occupied[1][2] == occupied[1][1]){
+            if(occupied[1][0] != 0) {
+                return true;
+            }
+        }
+        if(occupied[2][0] == occupied[2][1] && occupied[2][2] == occupied[2][1]){
+            if(occupied[2][0] != 0) {
+                return true;
+            }
+        }
+        if(occupied[0][0] == occupied[1][0] && occupied[2][0] == occupied[1][0]){
+            if(occupied[0][0] != 0) {
+                return true;
+            }
+        }
+        if(occupied[0][1] == occupied[1][1] && occupied[2][1] == occupied[1][1]){
+            if(occupied[0][1] != 0) {
+                return true;
+            }
+        }
+        if(occupied[0][2] == occupied[1][2] && occupied[2][2] == occupied[1][2]){
+            if(occupied[0][2] != 0) {
+                return true;
+            }
+        }
+        if(occupied[0][0] == occupied[1][1] && occupied[1][1] == occupied[2][2]){
+            if(occupied[0][0] != 0) {
+                return true;
+            }
+        }
+        if(occupied[0][2] == occupied[1][1] && occupied[1][1] == occupied[2][0]){
+            if(occupied[0][2] != 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void paintComponent(Graphics g){
@@ -100,6 +165,9 @@ public class GameController extends JPanel implements Runnable  {
             } else {
                 g2.drawString("O's turn", 560, 270);
             }
+        }
+        if(isOver){
+            g2.drawString("Player " + currentSign + " won", 560, 270);
         }
     }
 }
