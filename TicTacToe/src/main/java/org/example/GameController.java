@@ -18,6 +18,9 @@ public class GameController extends JPanel implements Runnable  {
     private boolean isOver = false;
     public static ArrayList<Sign> signs = new ArrayList<>();
     char currentSign = 'O';
+    int[][] startCords = new int[1][2];
+    int[][] endCords = new int[1][2];
+
 
     public GameController(){
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -85,7 +88,7 @@ public class GameController extends JPanel implements Runnable  {
                     Arrays.fill(ints, 0);
                 }
                 signs.clear();
-                // currentSign = '0';
+                currentSign = 'O';
                 isOver = false;
             }
             else{
@@ -114,47 +117,33 @@ public class GameController extends JPanel implements Runnable  {
     }
 
     public boolean isOver(){
-        if(occupied[0][0] == occupied[0][1] && occupied[0][2] == occupied[0][1]){
-            if(occupied[0][0] != 0) {
-                return true;
-            }
-        }
-        if(occupied[1][0] == occupied[1][1] && occupied[1][2] == occupied[1][1]){
-            if(occupied[1][0] != 0) {
-                return true;
-            }
-        }
-        if(occupied[2][0] == occupied[2][1] && occupied[2][2] == occupied[2][1]){
-            if(occupied[2][0] != 0) {
-                return true;
-            }
-        }
-        if(occupied[0][0] == occupied[1][0] && occupied[2][0] == occupied[1][0]){
-            if(occupied[0][0] != 0) {
-                return true;
-            }
-        }
-        if(occupied[0][1] == occupied[1][1] && occupied[2][1] == occupied[1][1]){
-            if(occupied[0][1] != 0) {
-                return true;
-            }
-        }
-        if(occupied[0][2] == occupied[1][2] && occupied[2][2] == occupied[1][2]){
-            if(occupied[0][2] != 0) {
-                return true;
-            }
-        }
-        if(occupied[0][0] == occupied[1][1] && occupied[1][1] == occupied[2][2]){
-            if(occupied[0][0] != 0) {
-                return true;
-            }
-        }
-        if(occupied[0][2] == occupied[1][1] && occupied[1][1] == occupied[2][0]){
-            if(occupied[0][2] != 0) {
-                return true;
-            }
-        }
+        int[][][] winConditions = {
+                {{0, 0}, {0, 1}, {0, 2}},
+                {{1, 0}, {1, 1}, {1, 2}},
+                {{2, 0}, {2, 1}, {2, 2}},
+                {{0, 0}, {1, 0}, {2, 0}},
+                {{0, 1}, {1, 1}, {2, 1}},
+                {{0, 2}, {1, 2}, {2, 2}},
+                {{0, 0}, {1, 1}, {2, 2}},
+                {{0, 2}, {1, 1}, {2, 0}}
+        };
 
+        for (int[][] condition : winConditions) {
+            int x1 = condition[0][0], y1 = condition[0][1];
+            int x2 = condition[1][0], y2 = condition[1][1];
+            int x3 = condition[2][0], y3 = condition[2][1];
+
+            if (occupied[x1][y1] == occupied[x2][y2] && occupied[x2][y2] == occupied[x3][y3]) {
+                if (occupied[x1][y1] != 0) {
+
+                    startCords[0][0] = x1 * Board.SQUARE_SIZE  + Board.SQUARE_SIZE / 2;
+                    startCords[0][1] = y1 * Board.SQUARE_SIZE + Board.SQUARE_SIZE / 2;
+                    endCords[0][0] = x3 * Board.SQUARE_SIZE + Board.SQUARE_SIZE / 2;
+                    endCords[0][1] = y3 * Board.SQUARE_SIZE + Board.SQUARE_SIZE / 2;
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -180,6 +169,16 @@ public class GameController extends JPanel implements Runnable  {
         }
         if(isOver){
             g2.drawString("Player " + currentSign + " won", 560, 270);
+            g2.setColor(Color.GREEN);
+            g2.setStroke(new BasicStroke(7));
+
+            int startX = startCords[0][0];
+            int startY = startCords[0][1];
+            int endX = endCords[0][0];
+            int endY = endCords[0][1];
+
+            g2.drawLine(startY, startX, endY, endX);
+
         }
     }
 }
