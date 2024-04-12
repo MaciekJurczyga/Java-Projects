@@ -4,6 +4,6 @@ public class OSign extends Sign{
 
     public OSign(int row, int col){
         super(row, col);
-        image = getImage("/O_Sign");
+        image = getImage("/O_Sign_2");
     }
 }

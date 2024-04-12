@@ -14,6 +14,7 @@ public class GameController extends JPanel implements Runnable  {
     Thread gameThread;
     Mouse mouse = new Mouse();
     private boolean mouseClicked = false;
+    private boolean isOver = false;
     public static ArrayList<Sign> signs = new ArrayList<>();
     char currentSign = 'O';
 
@@ -88,6 +89,16 @@ public class GameController extends JPanel implements Runnable  {
         synchronized (signs){
             for (Sign s : signs) {
                 s.draw(g2);
+            }
+        }
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setFont(new Font("Book Antiqua", Font.PLAIN, 30));
+        g2.setColor(Color.black);
+        if(!isOver) {
+            if (currentSign == 'X') {
+                g2.drawString("X's turn", 560, 270);
+            } else {
+                g2.drawString("O's turn", 560, 270);
             }
         }
     }
