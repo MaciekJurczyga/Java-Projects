@@ -114,7 +114,7 @@ public class GameController extends JPanel implements Runnable  {
                     Arrays.fill(ints, 0);
                 }
                 signs.clear();
-                currentSign = 'O';
+                currentSign = '?';
                 isOver = false;
                 isDraw = false;
                 signChosen = false;
@@ -124,7 +124,7 @@ public class GameController extends JPanel implements Runnable  {
             }
         }
         catch (InterruptedException e){
-            e.printStackTrace();
+            System.err.println("Error occurred" + e.getMessage());
         }
     }
 
